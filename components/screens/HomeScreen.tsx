@@ -54,7 +54,7 @@ export default function HomeScreen() {
       ctx.startY = translateY.value;
     },
     onActive: (event, ctx) => {
-      const nextY = ctx.startY as number+ event.translationY;
+      const nextY = (ctx.startY as number) + event.translationY;
 
       // Prevent dragging upward beyond Y_THRESHOLD
       if (nextY < Y_THRESHOLD) {
@@ -288,7 +288,6 @@ export default function HomeScreen() {
           </Animated.ScrollView>
         </Animated.View>
         {/* </PanGestureHandler> */}
-
       </ImageBackground>
     </View>
   );
@@ -298,13 +297,13 @@ const styles = StyleSheet.create({
   actionButtons: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    paddingHorizontal: 20,
+    paddingHorizontal: 5,
     marginTop: 20,
   },
   actionButton: {
     backgroundColor: '#eee',
     flex: 1,
-    height: 50,
+    height: 45,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 25,
