@@ -87,7 +87,7 @@ export default function CurrentRide() {
             </View>
           </View>
           <View style={styles.rightColumn}>
-            <TouchableOpacity style={styles.rideTakersCircle}>
+            <TouchableOpacity style={styles.rideTakersCircle} onPress={() => router.push('/ride-list')}>
               <Users size={24} color="#666" />
             </TouchableOpacity>
             <Text style={styles.rideTakersLabel}>Ride Takers</Text>
