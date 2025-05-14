@@ -177,10 +177,8 @@ const CarpoolScreen = () => {
           style={styles.actionButton}
           onPress={() => {
             if (activeTab === 'offer') router.push('/current-ride');
-            else router.push('/ride-list');
           }}
         >
-        
           <Text style={styles.actionButtonText}>
             {activeTab === 'find' ? 'FIND POOL' : 'OFFER POOL'}
           </Text>
