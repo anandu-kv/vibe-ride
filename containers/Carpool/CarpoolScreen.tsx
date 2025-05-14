@@ -18,11 +18,8 @@ import {
 import MapView, { Polyline, Marker, Region } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import { useLocationStore } from '@/store/locationStore';
-<<<<<<< Updated upstream
 import { router } from 'expo-router';
-=======
 import { useRouter } from 'expo-router';
->>>>>>> Stashed changes
 
 interface TabProps {
   label: string;
