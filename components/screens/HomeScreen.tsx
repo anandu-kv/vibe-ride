@@ -217,7 +217,13 @@ export default function HomeScreen() {
             <TouchableOpacity
               style={styles.inputField}
               activeOpacity={0.8}
-              onPress={() => router.push('/search?type=pickup')}
+              onPress={() =>
+                router.push(
+                  `/search?type=pickup&ride=${
+                    selected === 'find' ? 'find' : 'offer'
+                  }`
+                )
+              }
             >
               <View style={styles.iconWrapper}>
                 <View style={styles.greenDot} />
@@ -235,7 +241,13 @@ export default function HomeScreen() {
             <TouchableOpacity
               style={styles.inputField}
               activeOpacity={0.8}
-              onPress={() => router.push('/search?type=drop')}
+              onPress={() =>
+                router.push(
+                  `/search?type=drop&ride=${
+                    selected === 'find' ? 'find' : 'offer'
+                  }`
+                )
+              }
             >
               <Search size={20} color="#0284C7" style={styles.iconWrapper} />
               <Text

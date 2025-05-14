@@ -11,37 +11,54 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useLocationStore } from '@/store/locationStore';
 import { ArrowLeft, MapPin } from 'lucide-react-native';
 import * as Location from 'expo-location';
-import MapView, { Region } from 'react-native-maps';
+import MapView, { Marker, Region } from 'react-native-maps';
+import MapViewDirections from 'react-native-maps-directions';
 
 export default function MapPage() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const type = params.type === 'drop' ? 'Drop' : 'Pickup';
+  const ride = params.ride === 'find' ? 'Find' : 'Offer';
   const mapRef = useRef<MapView>(null);
   const [currentRegion, setCurrentRegion] = useState<Region | null>(null);
+  const [destination, setDestination] = useState(
+    useLocationStore.getState().pickupCoordinates
+  );
+
+  const [origin, setOrigin] = useState({
+    latitude: 10.011066756200517, // Default to Kerala
+    longitude: 76.36568197980523,
+  });
   const defaultRegion: Region = {
-    latitude: 10.0261,  // Default to Kerala
+    latitude: 10.0261, // Default to Kerala
     longitude: 76.3125,
     latitudeDelta: 0.05,
     longitudeDelta: 0.05,
   };
 
   useEffect(() => {
+    if (type === 'Drop') {
+      setOrigin(useLocationStore.getState().pickupCoordinates);
+    }
+
     (async () => {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') return;
 
         const location = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.Balanced
+          accuracy: Location.Accuracy.Balanced,
         });
 
-        mapRef.current?.animateToRegion({
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
-        }, 1000);
+        mapRef.current?.animateToRegion(
+          {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
+          },
+          1000
+        );
       } catch (error) {
         console.log('Error getting location:', error);
       }
@@ -71,44 +88,74 @@ export default function MapPage() {
           scrollEnabled
           showsUserLocation
           showsMyLocationButton
-          onRegionChangeComplete={(region) => setCurrentRegion(region)}
-        />
+          onRegionChangeComplete={(region) => {
+            console.log('Pin is now at:', region.latitude, region.longitude);
+            setCurrentRegion(region);
+          }}
+        >
+          {type === 'Drop' && (
+            <>
+              <MapViewDirections
+                origin={origin}
+                destination={destination}
+                apikey="AIzaSyBtw7f9P4UWEbIEzu54yXEDlPyaNXZ6wi4"
+                strokeWidth={4}
+                strokeColor="red"
+                mode={'DRIVING'}
+              />
+              <Marker coordinate={origin} title="Starting Point" />
+              <Marker coordinate={destination} title="Destination Point" />
+            </>
+          )}
+        </MapView>
+
         <View style={styles.pinContainer}>
           <MapPin size={32} color="rgb(56 131 56)" fill="rgb(56 131 56)" />
         </View>
       </View>
 
+      <TouchableOpacity
+        style={styles.confirmButton}
+        onPress={() => {
+          if (currentRegion) {
+            // Get the address using reverse geocoding
+            Location.reverseGeocodeAsync({
+              latitude: currentRegion.latitude,
+              longitude: currentRegion.longitude,
+            }).then((addresses) => {
+              const address = addresses[0];
+              const locationText = address
+                ? `${address.street || ''} ${address.city || ''} ${
+                    address.region || ''
+                  }`
+                : `${currentRegion.latitude.toFixed(
+                    6
+                  )}, ${currentRegion.longitude.toFixed(6)}`;
 
-        <TouchableOpacity 
-          style={styles.confirmButton}
-          onPress={() => {
-            if (currentRegion) {
-              // Get the address using reverse geocoding
-              Location.reverseGeocodeAsync({
-                latitude: currentRegion.latitude,
-                longitude: currentRegion.longitude
-              }).then(addresses => {
-                const address = addresses[0];
-                const locationText = address
-                  ? `${address.street || ''} ${address.city || ''} ${address.region || ''}`
-                  : `${currentRegion.latitude.toFixed(6)}, ${currentRegion.longitude.toFixed(6)}`;
-                const coordinates = `${currentRegion.latitude},${currentRegion.longitude}`;
-                
-                // Update the store based on the type
-                if (type === 'Pickup') {
-                  useLocationStore.getState().setPickupLocation(locationText, coordinates);
-                } else {
-                  useLocationStore.getState().setDropLocation(locationText, coordinates);
-                }
-                
+              // Update the store based on the type
+              if (type === 'Pickup') {
+                useLocationStore.getState().setPickupLocation(locationText, {
+                  latitude: currentRegion.latitude,
+                  longitude: currentRegion.longitude,
+                });
                 router.back();
-              });
-            }
-          }}
-        >
-          <Text style={styles.confirmButtonText}>CONFIRM POINT</Text>
-        </TouchableOpacity>
-          </SafeAreaView>
+              } else {
+                setDestination({
+                  latitude: currentRegion.latitude,
+                  longitude: currentRegion.longitude,
+                });
+                useLocationStore.getState().setDropLocation(locationText, {
+                  latitude: currentRegion.latitude,
+                  longitude: currentRegion.longitude,
+                });
+              }
+            });
+          }
+        }}
+      >
+        <Text style={styles.confirmButtonText}>CONFIRM POINT</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
   );
 }
 

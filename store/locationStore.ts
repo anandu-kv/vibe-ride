@@ -1,29 +1,45 @@
-import { create } from 'zustand'
+import { create } from 'zustand';
 
+type Coordinates = {
+  latitude: number;
+  longitude: number;
+};
 interface LocationState {
-  pickupLocation: string
-  dropLocation: string
-  pickupCoordinates: string
-  dropCoordinates: string
-  setPickupLocation: (location: string, coordinates: string) => void
-  setDropLocation: (location: string, coordinates: string) => void
-  clearLocations: () => void
+  pickupLocation: string;
+  dropLocation: string;
+  pickupCoordinates: Coordinates;
+  dropCoordinates: Coordinates;
+  setPickupLocation: (location: string, coordinates: Coordinates) => void;
+  setDropLocation: (location: string, coordinates: Coordinates) => void;
+  clearLocations: () => void;
 }
 
 export const useLocationStore = create<LocationState>((set) => ({
   pickupLocation: '',
   dropLocation: '',
-  pickupCoordinates: '',
-  dropCoordinates: '',
-  setPickupLocation: (location, coordinates) => 
+  pickupCoordinates: {
+    latitude: 0,
+    longitude: 0,
+  },
+  dropCoordinates: {
+    latitude: 0,
+    longitude: 0,
+  },
+  setPickupLocation: (location, coordinates) =>
     set({ pickupLocation: location, pickupCoordinates: coordinates }),
-  setDropLocation: (location, coordinates) => 
+  setDropLocation: (location, coordinates) =>
     set({ dropLocation: location, dropCoordinates: coordinates }),
-  clearLocations: () => 
-    set({ 
-      pickupLocation: '', 
-      dropLocation: '', 
-      pickupCoordinates: '', 
-      dropCoordinates: '' 
+  clearLocations: () =>
+    set({
+      pickupLocation: '',
+      dropLocation: '',
+      pickupCoordinates: {
+        latitude: 0,
+        longitude: 0,
+      },
+      dropCoordinates: {
+        latitude: 0,
+        longitude: 0,
+      },
     }),
-}))
+}));
