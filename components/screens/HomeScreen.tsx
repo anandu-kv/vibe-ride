@@ -34,6 +34,7 @@ import FrequentTripsSection from '@/components/home/FrequentTripsSection';
 import LocationButtons from '@/components/home/LocationButtons';
 import RideTypeSelector from '@/components/home/RideTypeSelector';
 import ContributionCard from '@/components/home/ContributionCard';
+import { useRouter } from 'expo-router';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const MAX_TRANSLATE_Y = -SCREEN_HEIGHT + 100;
@@ -53,7 +54,7 @@ export default function HomeScreen() {
       ctx.startY = translateY.value;
     },
     onActive: (event, ctx) => {
-      const nextY = ctx.startY + event.translationY;
+      const nextY = ctx.startY as number+ event.translationY;
 
       // Prevent dragging upward beyond Y_THRESHOLD
       if (nextY < Y_THRESHOLD) {
@@ -100,6 +101,7 @@ export default function HomeScreen() {
   }));
 
   const [selected, setSelected] = useState<'find' | 'offer' | null>(null);
+  const router = useRouter();
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -190,25 +192,25 @@ export default function HomeScreen() {
                 </Text>
               </TouchableOpacity>
             </View>
-            <View style={styles.inputField}>
+            <TouchableOpacity
+              style={styles.inputField}
+              activeOpacity={0.8}
+              onPress={() => router.push('/search?type=pickup')}
+            >
               <View style={styles.iconWrapper}>
                 <View style={styles.greenDot} />
               </View>
-              <TextInput
-                style={styles.textInput}
-                placeholder="Enter Pickup Location"
-                placeholderTextColor="#999"
-              />
-            </View>
+              <Text style={styles.inputPlaceholder}>Enter Pickup Location</Text>
+            </TouchableOpacity>
 
-            <View style={styles.inputField}>
+            <TouchableOpacity
+              style={styles.inputField}
+              activeOpacity={0.8}
+              onPress={() => router.push('/search?type=drop')}
+            >
               <Search size={20} color="#0284C7" style={styles.iconWrapper} />
-              <TextInput
-                style={styles.textInput}
-                placeholder="Enter Drop Location"
-                placeholderTextColor="#999"
-              />
-            </View>
+              <Text style={styles.inputPlaceholder}>Enter Drop Location</Text>
+            </TouchableOpacity>
             <ReferralSection />
             <OfferSection />
             <FrequentTripsSection />
@@ -604,17 +606,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderBottomWidth: 1,
     borderColor: '#ccc',
-    paddingBottom: 4, // Decrease space between text and underline
-    marginVertical: 6, // Reduce gap between the two input fields
+    paddingBottom: 3,
+    marginVertical: 6,
     marginHorizontal: 16,
   },
   iconWrapper: {
     marginRight: 8,
   },
-
   textInput: {
     flex: 1,
     fontSize: 16,
     color: '#333',
+  },
+  inputPlaceholder: {
+    flex: 1,
+    fontSize: 16,
+    color: '#999',
   },
 });
