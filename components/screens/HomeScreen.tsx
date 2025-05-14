@@ -197,7 +197,7 @@ export default function HomeScreen() {
             <TouchableOpacity
               style={styles.inputField}
               activeOpacity={0.8}
-              onPress={() => router.push('/map?type=pickup')}
+              onPress={() => router.push('/search?type=pickup')}
             >
               <View style={styles.iconWrapper}>
                 <View style={styles.greenDot} />
@@ -210,7 +210,7 @@ export default function HomeScreen() {
             <TouchableOpacity
               style={styles.inputField}
               activeOpacity={0.8}
-              onPress={() => router.push('/map?type=drop')}
+              onPress={() => router.push('/search?type=drop')}
             >
               <Search size={20} color="#0284C7" style={styles.iconWrapper} />
               <Text style={[styles.inputPlaceholder, dropLocation && styles.inputText]}>
