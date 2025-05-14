@@ -287,7 +287,6 @@ export default function HomeScreen() {
         </Animated.View>
         {/* </PanGestureHandler> */}
 
-        <RideTypeSelector />
       </ImageBackground>
     </View>
   );
