@@ -138,7 +138,7 @@ export default function MapPage() {
                   latitude: currentRegion.latitude,
                   longitude: currentRegion.longitude,
                 });
-                router.back();
+                router.push('/home')
               } else {
                 setDestination({
                   latitude: currentRegion.latitude,
@@ -148,6 +148,8 @@ export default function MapPage() {
                   latitude: currentRegion.latitude,
                   longitude: currentRegion.longitude,
                 });
+                router.push('/carpool')
+
               }
             });
           }
