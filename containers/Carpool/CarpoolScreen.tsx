@@ -1,7 +1,23 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import { ChevronLeft, MapPin, Clock, Users, Percent, ArrowRight, ChevronUp } from 'lucide-react-native';
-import MapView, { Polyline, Marker } from 'react-native-maps';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+} from 'react-native';
+import {
+  ChevronLeft,
+  MapPin,
+  Clock,
+  Users,
+  Percent,
+  ArrowRight,
+  ChevronUp,
+} from 'lucide-react-native';
+import MapView, { Polyline, Marker, Region } from 'react-native-maps';
+import MapViewDirections from 'react-native-maps-directions';
+import { useLocationStore } from '@/store/locationStore';
 
 interface TabProps {
   label: string;
@@ -14,7 +30,9 @@ const Tab: React.FC<TabProps> = ({ label, active, onPress }) => (
     style={[styles.tab, active && styles.activeTab]}
     onPress={onPress}
   >
-    <Text style={[styles.tabText, active && styles.activeTabText]}>{label}</Text>
+    <Text style={[styles.tabText, active && styles.activeTabText]}>
+      {label}
+    </Text>
   </TouchableOpacity>
 );
 
@@ -22,6 +40,12 @@ const CarpoolScreen = () => {
   const [activeTab, setActiveTab] = useState<'find' | 'offer'>('find');
   const [recurringRide, setRecurringRide] = useState(false);
 
+  const defaultRegion: Region = {
+    latitude: 10.0261, // Default to Kerala
+    longitude: 76.3125,
+    latitudeDelta: 0.05,
+    longitudeDelta: 0.05,
+  };
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -35,30 +59,38 @@ const CarpoolScreen = () => {
       {/* Map View */}
       <View style={styles.mapContainer}>
         <MapView
+          // ref={mapRef}
           style={styles.map}
-          initialRegion={{
-            latitude: 10.0159,
-            longitude: 76.3419,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
+          initialRegion={defaultRegion}
+          showsCompass
+          rotateEnabled
+          zoomEnabled
+          scrollEnabled
+          showsUserLocation
+          showsMyLocationButton
+          onRegionChangeComplete={(region) => {
+            console.log('Pin is now at:', region.latitude, region.longitude);
+            // setCurrentRegion(region);
           }}
         >
-          <Marker
-            coordinate={{ latitude: 10.0159, longitude: 76.3419 }}
-            title="Infopark"
-          />
-          <Marker
-            coordinate={{ latitude: 10.0259, longitude: 76.3519 }}
-            title="Diamond Valley"
-          />
-          <Polyline
-            coordinates={[
-              { latitude: 10.0159, longitude: 76.3419 },
-              { latitude: 10.0259, longitude: 76.3519 },
-            ]}
-            strokeColor="#2196F3"
-            strokeWidth={3}
-          />
+          <>
+            <MapViewDirections
+              origin={useLocationStore.getState().pickupCoordinates}
+              destination={useLocationStore.getState().dropCoordinates}
+              apikey="AIzaSyBtw7f9P4UWEbIEzu54yXEDlPyaNXZ6wi4"
+              strokeWidth={4}
+              strokeColor="red"
+              mode={'DRIVING'}
+            />
+            <Marker
+              coordinate={useLocationStore.getState().pickupCoordinates}
+              title="Starting Point"
+            />
+            <Marker
+              coordinate={useLocationStore.getState().dropCoordinates}
+              title="Destination Point"
+            />
+          </>
         </MapView>
         <TouchableOpacity style={styles.routeButton}>
           <Text style={styles.routeButtonText}>Route</Text>
