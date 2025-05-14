@@ -36,6 +36,7 @@ import RideTypeSelector from '@/components/home/RideTypeSelector';
 import ContributionCard from '@/components/home/ContributionCard';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useLocationStore } from '@/store/locationStore';
+import Sidebar from '@/containers/Sidebar';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const MAX_TRANSLATE_Y = -SCREEN_HEIGHT + 100;
@@ -93,11 +94,21 @@ export default function HomeScreen() {
     };
   });
 
-  const backDropOpacity = useAnimatedStyle(() => {
-    return {
-      opacity: interpolate(translateY.value, [0, MAX_TRANSLATE_Y], [0, 0.7]),
-    };
-  });
+  const menuTranslateX = useSharedValue(-300);
+  const [isMenuOpen, setMenuOpen] = useState(false);
+
+  const menuStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: menuTranslateX.value }],
+  }));
+
+  const toggleMenu = () => {
+    const isOpening = menuTranslateX.value !== 0;
+    setMenuOpen(isOpening);
+    menuTranslateX.value = withSpring(isOpening ? 0 : -300, {
+      damping: 20,
+      stiffness: 90,
+    });
+  };
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: translateY.value }],
@@ -113,9 +124,19 @@ export default function HomeScreen() {
         style={styles.backgroundImage}
       >
         <View style={styles.overlay} />
+        {isMenuOpen && (
+          <TouchableOpacity
+            style={styles.menuBackdrop}
+            onPress={toggleMenu}
+            activeOpacity={1}
+          />
+        )}
 
+        <Animated.View style={[styles.sideMenu, menuStyle]}>
+          <Sidebar />
+        </Animated.View>
         <View style={styles.header}>
-          <TouchableOpacity style={styles.iconButton}>
+          <TouchableOpacity style={styles.iconButton} onPress={toggleMenu}>
             <View style={styles.menuIcon}>
               <View style={styles.menuLine} />
               <View style={styles.menuLine} />
@@ -144,8 +165,6 @@ export default function HomeScreen() {
             You are helping to reduce traffic congestion inside the city
           </Text>
         </View>
-
-        {/* <Animated.View style={[styles.backdrop, backDropOpacity]} /> */}
 
         {/* <PanGestureHandler onGestureEvent={gesture}> */}
         <Animated.View style={[styles.bottomSheet, rBottomSheetStyle]}>
@@ -203,7 +222,12 @@ export default function HomeScreen() {
               <View style={styles.iconWrapper}>
                 <View style={styles.greenDot} />
               </View>
-              <Text style={[styles.inputPlaceholder, pickupLocation && styles.inputText]}>
+              <Text
+                style={[
+                  styles.inputPlaceholder,
+                  pickupLocation && styles.inputText,
+                ]}
+              >
                 {pickupLocation || 'Enter Pickup Location'}
               </Text>
             </TouchableOpacity>
@@ -214,7 +238,12 @@ export default function HomeScreen() {
               onPress={() => router.push('/search?type=drop')}
             >
               <Search size={20} color="#0284C7" style={styles.iconWrapper} />
-              <Text style={[styles.inputPlaceholder, dropLocation && styles.inputText]}>
+              <Text
+                style={[
+                  styles.inputPlaceholder,
+                  dropLocation && styles.inputText,
+                ]}
+              >
                 {dropLocation || 'Enter Drop Location'}
               </Text>
             </TouchableOpacity>
@@ -301,6 +330,36 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  container: { flex: 1 },
+  backgroundImage: { flex: 1, resizeMode: 'cover' },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+  },
+  menuBackdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    zIndex: 998,
+  },
+  sideMenu: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    width: 300,
+    backgroundColor: '#fff',
+    zIndex: 999,
+    paddingTop: 60,
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 0 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 8,
+  },
   actionButtons: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -336,17 +395,7 @@ const styles = StyleSheet.create({
   activeButtonText: {
     color: 'white',
   },
-  container: {
-    flex: 1,
-  },
-  backgroundImage: {
-    flex: 1,
-    resizeMode: 'cover',
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-  },
+
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
