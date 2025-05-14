@@ -39,7 +39,7 @@ export default function SearchPage() {
 
       <TouchableOpacity 
         style={styles.mapOption}
-        onPress={() => router.push('/map')}
+        onPress={() => router.push(`/map?type=${params.type}`)}
       >
         <View style={styles.mapOptionContent}>
           <Map size={20} color="#6B7280" />
