@@ -18,6 +18,7 @@ import {
 import MapView, { Polyline, Marker, Region } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import { useLocationStore } from '@/store/locationStore';
+import { router } from 'expo-router';
 
 interface TabProps {
   label: string;
@@ -167,7 +168,12 @@ const CarpoolScreen = () => {
         )}
 
         {/* Action Button */}
-        <TouchableOpacity style={styles.actionButton}>
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={() => {
+            if (activeTab === 'offer') router.push('/current-ride');
+          }}
+        >
           <Text style={styles.actionButtonText}>
             {activeTab === 'find' ? 'FIND POOL' : 'OFFER POOL'}
           </Text>
