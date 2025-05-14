@@ -34,7 +34,8 @@ import FrequentTripsSection from '@/components/home/FrequentTripsSection';
 import LocationButtons from '@/components/home/LocationButtons';
 import RideTypeSelector from '@/components/home/RideTypeSelector';
 import ContributionCard from '@/components/home/ContributionCard';
-import { useRouter } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useLocationStore } from '@/store/locationStore';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const MAX_TRANSLATE_Y = -SCREEN_HEIGHT + 100;
@@ -43,6 +44,8 @@ export default function HomeScreen() {
   const translateY = useSharedValue(0);
   const scrollEnabled = useSharedValue(false);
   const isLocked = useSharedValue(false);
+  const [selected, setSelected] = useState<'find' | 'offer' | null>(null);
+  const { pickupLocation, dropLocation } = useLocationStore();
 
   const context = useSharedValue({ y: 0 });
 
@@ -100,8 +103,7 @@ export default function HomeScreen() {
     transform: [{ translateY: translateY.value }],
   }));
 
-  const [selected, setSelected] = useState<'find' | 'offer' | null>(null);
-  const router = useRouter();
+  const params = useLocalSearchParams();
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -195,21 +197,25 @@ export default function HomeScreen() {
             <TouchableOpacity
               style={styles.inputField}
               activeOpacity={0.8}
-              onPress={() => router.push('/search?type=pickup')}
+              onPress={() => router.push('/map?type=pickup')}
             >
               <View style={styles.iconWrapper}>
                 <View style={styles.greenDot} />
               </View>
-              <Text style={styles.inputPlaceholder}>Enter Pickup Location</Text>
+              <Text style={[styles.inputPlaceholder, pickupLocation && styles.inputText]}>
+                {pickupLocation || 'Enter Pickup Location'}
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.inputField}
               activeOpacity={0.8}
-              onPress={() => router.push('/search?type=drop')}
+              onPress={() => router.push('/map?type=drop')}
             >
               <Search size={20} color="#0284C7" style={styles.iconWrapper} />
-              <Text style={styles.inputPlaceholder}>Enter Drop Location</Text>
+              <Text style={[styles.inputPlaceholder, dropLocation && styles.inputText]}>
+                {dropLocation || 'Enter Drop Location'}
+              </Text>
             </TouchableOpacity>
             <ReferralSection />
             <OfferSection />
@@ -620,5 +626,8 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: '#999',
+  },
+  inputText: {
+    color: '#333',
   },
 });
