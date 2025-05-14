@@ -1,45 +1,36 @@
 import { Tabs } from 'expo-router';
-import { Chrome as Home, CircleUser as UserCircle, Clock, Settings } from 'lucide-react-native';
+import { Chrome as Home, CircleUser as UserCircle, Clock, Settings, CarIcon, CarFrontIcon } from 'lucide-react-native';
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#10B981',
+        tabBarActiveTintColor: '#FFFFFF',
         tabBarInactiveTintColor: '#6B7280',
         tabBarStyle: {
           height: 60,
-          paddingBottom: 10,
+          borderRadius: 20,
+        },
+        tabBarItemStyle: {
+          borderRadius: 20,
         },
       }}
     >
       <Tabs.Screen
-        name="home"
+        name="taxi"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
+          title: 'Taxi',
+          tabBarIcon: ({ color, size }) => <CarIcon size={size} color={color} />,
+          tabBarActiveBackgroundColor: 'rgb(51 181 51)',
         }}
       />
       <Tabs.Screen
-        name="trips"
+        name="carpool"
         options={{
-          title: 'My Trips',
-          tabBarIcon: ({ color, size }) => <Clock size={size} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: 'Profile',
-          tabBarIcon: ({ color, size }) => <UserCircle size={size} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: 'Settings',
-          tabBarIcon: ({ color, size }) => <Settings size={size} color={color} />,
+          title: 'Carpool',
+          tabBarIcon: ({ color, size }) => <CarFrontIcon size={size} color={color} />,
+          tabBarActiveBackgroundColor: 'rgb(56 131 56)',
         }}
       />
     </Tabs>

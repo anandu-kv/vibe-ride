@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import HomeScreen from '@/components/screens/HomeScreen';
+import CarpoolScreen from '@/components/screens/CarpoolScreen';
 
 export default function Home() {
-  return <HomeScreen />;
+  return <CarpoolScreen />;
 }
 
 const styles = StyleSheet.create({
