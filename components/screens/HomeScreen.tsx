@@ -127,6 +127,7 @@ export default function HomeScreen() {
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.iconButton, styles.notificationButton]}
+              onPress={() => router.push('/notifications')}
             >
               <Bell size={24} color="#fff" />
               <View style={styles.notificationBadge}>
@@ -142,7 +143,7 @@ export default function HomeScreen() {
           </Text>
         </View>
 
-        <Animated.View style={[styles.backdrop, backDropOpacity]} />
+        {/* <Animated.View style={[styles.backdrop, backDropOpacity]} /> */}
 
         {/* <PanGestureHandler onGestureEvent={gesture}> */}
         <Animated.View style={[styles.bottomSheet, rBottomSheetStyle]}>
