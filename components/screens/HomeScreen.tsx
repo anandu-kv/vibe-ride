@@ -143,78 +143,72 @@ export default function HomeScreen() {
         <Animated.View style={[styles.backdrop, backDropOpacity]} />
 
         {/* <PanGestureHandler onGestureEvent={gesture}> */}
-        <Animated.View
-          style={[styles.bottomSheet, rBottomSheetStyle]}
-          // scrollEnabled={scrollEnabled.value}
-          // showsVerticalScrollIndicator={false}
-          // onScrollBeginDrag={() => {
-          //   // Optional: disable dragging while scrolling
-          //   if (isLocked.value) {
-          //     scrollEnabled.value = false;
-          //   }
-          // }}
-        >
+        <Animated.View style={[styles.bottomSheet, rBottomSheetStyle]}>
           <PanGestureHandler onGestureEvent={gesture}>
             <Animated.View style={styles.grabber}>
               <View style={styles.bottomSheetHandle} />
             </Animated.View>
           </PanGestureHandler>
 
-          <View style={styles.actionButtons}>
-            <TouchableOpacity
-              style={[
-                styles.actionButton,
-                selected === 'find' && styles.activeButton,
-              ]}
-              onPress={() => setSelected('find')}
-            >
-              <Text
-                style={[
-                  styles.actionButtonText,
-                  selected === 'find' && styles.activeButtonText,
-                ]}
-              >
-                Find Pool
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.actionButton,
-                styles.outlineButton,
-                selected === 'offer' && styles.activeButton,
-              ]}
-              onPress={() => setSelected('offer')}
-            >
-              <Text
-                style={[
-                  styles.outlineButtonText,
-                  selected === 'offer' && styles.activeButtonText,
-                ]}
-              >
-                Offer Pool
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.locationField}>
-            <View style={styles.locationIcon}>
-              <View style={styles.greenDot} />
-            </View>
-            <Text style={styles.locationText}>
-              2nd floor | Smart City, Kakkanad, E...
-            </Text>
-          </View>
-
-          <View style={styles.searchField}>
-            <Search size={20} color="#0284C7" style={styles.searchIcon} />
-            <Text style={styles.searchPlaceholder}>Enter Drop Location</Text>
-          </View>
-
           <Animated.ScrollView
             style={styles.scrollContent}
             showsVerticalScrollIndicator={false}
           >
+            <View style={styles.actionButtons}>
+              <TouchableOpacity
+                style={[
+                  styles.actionButton,
+                  selected === 'find' && styles.activeButton,
+                ]}
+                onPress={() => setSelected('find')}
+              >
+                <Text
+                  style={[
+                    styles.actionButtonText,
+                    selected === 'find' && styles.activeButtonText,
+                  ]}
+                >
+                  Find Pool
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.actionButton,
+                  styles.outlineButton,
+                  selected === 'offer' && styles.activeButton,
+                ]}
+                onPress={() => setSelected('offer')}
+              >
+                <Text
+                  style={[
+                    styles.outlineButtonText,
+                    selected === 'offer' && styles.activeButtonText,
+                  ]}
+                >
+                  Offer Pool
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.inputField}>
+              <View style={styles.iconWrapper}>
+                <View style={styles.greenDot} />
+              </View>
+              <TextInput
+                style={styles.textInput}
+                placeholder="Enter Pickup Location"
+                placeholderTextColor="#999"
+              />
+            </View>
+
+            <View style={styles.inputField}>
+              <Search size={20} color="#0284C7" style={styles.iconWrapper} />
+              <TextInput
+                style={styles.textInput}
+                placeholder="Enter Drop Location"
+                placeholderTextColor="#999"
+              />
+            </View>
             <ReferralSection />
             <OfferSection />
             <FrequentTripsSection />
@@ -300,6 +294,41 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  actionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingHorizontal: 20,
+    marginTop: 20,
+  },
+  actionButton: {
+    backgroundColor: '#eee',
+    flex: 1,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 25,
+    marginRight: 10,
+  },
+  actionButtonText: {
+    color: '#333',
+    fontWeight: '600',
+  },
+  outlineButton: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
+  outlineButtonText: {
+    color: '#333',
+    fontWeight: '600',
+  },
+  activeButton: {
+    backgroundColor: '#4CAF50', // green
+    borderColor: '#4CAF50',
+  },
+  activeButtonText: {
+    color: 'white',
+  },
   container: {
     flex: 1,
   },
@@ -406,36 +435,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    marginTop: 20,
-  },
-  actionButton: {
-    flex: 1,
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#10B981',
-    borderRadius: 25,
-    marginRight: 10,
-  },
-  outlineButton: {
-    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-    marginRight: 0,
-    marginLeft: 10,
-  },
-  actionButtonText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 16,
-  },
-  outlineButtonText: {
-    color: '#10B981',
-    fontWeight: '600',
-    fontSize: 16,
   },
   locationField: {
     flexDirection: 'row',
@@ -600,11 +599,22 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  activeButton: {
-    backgroundColor: '#4CAF50', // green
-    borderColor: '#4CAF50',
+  inputField: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
+    paddingBottom: 4, // Decrease space between text and underline
+    marginVertical: 6, // Reduce gap between the two input fields
+    marginHorizontal: 16,
   },
-  activeButtonText: {
-    color: 'white',
+  iconWrapper: {
+    marginRight: 8,
+  },
+
+  textInput: {
+    flex: 1,
+    fontSize: 16,
+    color: '#333',
   },
 });
