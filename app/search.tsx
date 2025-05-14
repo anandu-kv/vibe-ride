@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { ArrowLeft, Search as SearchIcon } from 'lucide-react-native';
+import { ArrowLeft, Search as SearchIcon, Map, Crosshair } from 'lucide-react-native';
 
 export default function SearchPage() {
   const router = useRouter();
@@ -36,11 +36,41 @@ export default function SearchPage() {
           autoFocus
         />
       </View>
+
+      <TouchableOpacity 
+        style={styles.mapOption}
+        onPress={() => router.push('/map')}
+      >
+        <View style={styles.mapOptionContent}>
+          <Map size={20} color="#6B7280" />
+          <Text style={styles.mapOptionText}>Select location by map</Text>
+          <Crosshair size={20} color="#6B7280" />
+        </View>
+      </TouchableOpacity>
+      
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  mapOption: {
+    marginHorizontal: 16,
+    marginTop: 8,
+    padding: 16,
+    backgroundColor: '#F3F4F6',
+    borderRadius: 8,
+  },
+  mapOptionContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  mapOptionText: {
+    flex: 1,
+    marginLeft: 12,
+    fontSize: 16,
+    color: '#4B5563',
+  },
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
