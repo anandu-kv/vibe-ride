@@ -8,7 +8,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { ArrowLeft, MapPin, Crosshair } from 'lucide-react-native';
+import { useLocationStore } from '@/store/locationStore';
+import { ArrowLeft, MapPin } from 'lucide-react-native';
 import * as Location from 'expo-location';
 import MapView, { Region } from 'react-native-maps';
 
@@ -17,6 +18,7 @@ export default function MapPage() {
   const params = useLocalSearchParams();
   const type = params.type === 'drop' ? 'Drop' : 'Pickup';
   const mapRef = useRef<MapView>(null);
+  const [currentRegion, setCurrentRegion] = useState<Region | null>(null);
   const defaultRegion: Region = {
     latitude: 10.0261,  // Default to Kerala
     longitude: 76.3125,
@@ -69,9 +71,10 @@ export default function MapPage() {
           scrollEnabled
           showsUserLocation
           showsMyLocationButton
+          onRegionChangeComplete={(region) => setCurrentRegion(region)}
         />
         <View style={styles.pinContainer}>
-          <MapPin size={32} color="rgb(56 131 56)" />
+          <MapPin size={32} color="rgb(56 131 56)" fill="rgb(56 131 56)" />
         </View>
       </View>
 
@@ -79,8 +82,28 @@ export default function MapPage() {
         <TouchableOpacity 
           style={styles.confirmButton}
           onPress={() => {
-            // TODO: Get coordinates from map center and pass back
-            router.back();
+            if (currentRegion) {
+              // Get the address using reverse geocoding
+              Location.reverseGeocodeAsync({
+                latitude: currentRegion.latitude,
+                longitude: currentRegion.longitude
+              }).then(addresses => {
+                const address = addresses[0];
+                const locationText = address
+                  ? `${address.street || ''} ${address.city || ''} ${address.region || ''}`
+                  : `${currentRegion.latitude.toFixed(6)}, ${currentRegion.longitude.toFixed(6)}`;
+                const coordinates = `${currentRegion.latitude},${currentRegion.longitude}`;
+                
+                // Update the store based on the type
+                if (type === 'Pickup') {
+                  useLocationStore.getState().setPickupLocation(locationText, coordinates);
+                } else {
+                  useLocationStore.getState().setDropLocation(locationText, coordinates);
+                }
+                
+                router.back();
+              });
+            }
           }}
         >
           <Text style={styles.confirmButtonText}>CONFIRM POINT</Text>
