@@ -18,7 +18,11 @@ import {
 import MapView, { Polyline, Marker, Region } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import { useLocationStore } from '@/store/locationStore';
+<<<<<<< Updated upstream
 import { router } from 'expo-router';
+=======
+import { useRouter } from 'expo-router';
+>>>>>>> Stashed changes
 
 interface TabProps {
   label: string;
@@ -38,6 +42,7 @@ const Tab: React.FC<TabProps> = ({ label, active, onPress }) => (
 );
 
 const CarpoolScreen = () => {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<'find' | 'offer'>('find');
   const [recurringRide, setRecurringRide] = useState(false);
 
@@ -172,8 +177,10 @@ const CarpoolScreen = () => {
           style={styles.actionButton}
           onPress={() => {
             if (activeTab === 'offer') router.push('/current-ride');
+            else router.push('/ride-list');
           }}
         >
+        
           <Text style={styles.actionButtonText}>
             {activeTab === 'find' ? 'FIND POOL' : 'OFFER POOL'}
           </Text>
